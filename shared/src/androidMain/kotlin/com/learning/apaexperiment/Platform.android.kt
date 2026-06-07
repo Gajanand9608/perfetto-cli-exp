@@ -7,5 +7,3 @@ class AndroidPlatform : Platform {
 }
 
 actual fun getPlatform(): Platform = AndroidPlatform()
-
-internal actual fun getTimeMillis(): Long = System.currentTimeMillis()

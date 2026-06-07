@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.time.TimeSource
 import org.jetbrains.compose.resources.painterResource
 
 import apaexperiment.shared.generated.resources.Res
@@ -27,7 +28,7 @@ import apaexperiment.shared.generated.resources.compose_multiplatform
 
 @Composable
 @Preview
-fun App() {
+fun App(buildVariant: String = "preview") {
     MaterialTheme {
         var showContent by remember { mutableStateOf(false) }
         var cpuTestRunning by remember { mutableStateOf(false) }
@@ -45,6 +46,7 @@ fun App() {
             Button(onClick = { showContent = !showContent }) {
                 Text("Click me!")
             }
+            Text("Build variant: $buildVariant")
             Button(
                 enabled = !cpuTestRunning,
                 onClick = {
@@ -77,11 +79,11 @@ fun App() {
 }
 
 fun runHeavyCpuOperation(durationMillis: Long = 10_000L): Long {
-    val startTime = getTimeMillis()
+    val startTime = TimeSource.Monotonic.markNow()
     var seed = 0x5DEECE66DL
     var result = 0L
 
-    while (getTimeMillis() - startTime < durationMillis) {
+    while (startTime.elapsedNow().inWholeMilliseconds < durationMillis) {
         var candidate = seed or 1L
         repeat(5_000) {
             candidate = ((candidate * 1_664_525L) + 1_013_904_223L) and Long.MAX_VALUE
@@ -106,5 +108,3 @@ private fun calculatePrimeWeightedValue(value: Long): Long {
 
     return checksum
 }
-
-internal expect fun getTimeMillis(): Long

@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            App()
+            App(buildVariant = BuildConfig.BUILD_TYPE)
         }
     }
 }
