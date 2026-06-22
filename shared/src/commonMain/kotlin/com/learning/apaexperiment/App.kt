@@ -25,6 +25,7 @@ import org.jetbrains.compose.resources.painterResource
 
 import apaexperiment.shared.generated.resources.Res
 import apaexperiment.shared.generated.resources.compose_multiplatform
+import kotlin.time.Clock
 
 @Composable
 @Preview
@@ -52,7 +53,7 @@ fun App(buildVariant: String = "preview") {
                 onClick = {
                     scope.launch {
                         cpuTestRunning = true
-                        cpuTestResult = withContext(Dispatchers.Default) {
+                        cpuTestResult = withContext(Dispatchers.Main) {
                             runHeavyCpuOperation()
                         }
                         cpuTestRunning = false
@@ -79,6 +80,11 @@ fun App(buildVariant: String = "preview") {
 }
 
 fun runHeavyCpuOperation(durationMillis: Long = 10_000L): Long {
+    return executeHeavyCpuOperation(durationMillis)
+}
+
+private fun executeHeavyCpuOperation(durationMillis: Long): Long {
+    val x = fibo(50)
     val startTime = TimeSource.Monotonic.markNow()
     var seed = 0x5DEECE66DL
     var result = 0L
@@ -92,7 +98,12 @@ fun runHeavyCpuOperation(durationMillis: Long = 10_000L): Long {
         seed = seed xor result
     }
 
-    return result
+    return x + result
+}
+
+fun fibo(x: Long) : Long {
+    if(x <= 1) return x
+    return fibo(x-1) + fibo(x-2)
 }
 
 private fun calculatePrimeWeightedValue(value: Long): Long {
